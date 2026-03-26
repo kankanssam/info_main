@@ -133,6 +133,21 @@
             color: var(--tag-bg);
             grid-column: 1 / -1;
         }
+
+        /* --- 하단 푸터(저작권 및 개발자 표시) --- */
+        footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #E2E8F0;
+            text-align: center;
+            color: #64748B; /* 본문보다 살짝 연한 회색 */
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        footer p {
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -148,6 +163,12 @@
     <div class="grid-container" id="card-container">
         <div id="loading-msg">데이터를 불러오는 중입니다...</div>
     </div>
+
+    <!-- 하단 푸터 추가 -->
+    <footer>
+        <p>© 2026 정왕고등학교. All rights reserved.<br>
+        Developed by 김관동/한진우/이진석</p>
+    </footer>
 
     <script>
         // 알려주신 정확한 CSV 링크 적용 완료 (sheet1 - 갈무리 데이터)
