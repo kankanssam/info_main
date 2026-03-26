@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>정왕고 정보과목 웹페이지</title>
+    <title>나의 웹앱 갈무리</title>
     <style>
         /* --- 컬러 팔레트 수정 (흰색 배경, 파스텔 톤) --- */
         :root {
@@ -153,8 +153,9 @@
         // 알려주신 정확한 CSV 링크 적용 완료 (sheet1 - 갈무리 데이터)
         const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTeppfMxUOempDMUrlnp_Qqm_aR6EZ3_yXM4mNvwZ3MFBLmMzzFJL47gpo158FxNWIAKcYFSR7Z1Amk/pub?gid=0&single=true&output=csv";
 
-        // ★★★ sheet2 (방문자 수)의 CSV 링크를 여기에 넣어주세요 ★★★
-        const visitorCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTeppfMxUOempDMUrlnp_Qqm_aR6EZ3_yXM4mNvwZ3MFBLmMzzFJL47gpo158FxNWIAKcYFSR7Z1Amk/pub?gid=1154690763&single=true&output=csv";
+        // ★★★ 구글 Apps Script에서 배포 후 복사한 '웹 앱 URL'을 여기에 넣어주세요 ★★★
+        // 예시: "https://script.google.com/macros/s/AKfycby.../exec"
+        const scriptUrl = "여기에_Apps_Script_웹앱_URL을_넣어주세요";
 
         // CSV의 한 줄을 안전하게 분리하는 함수 (셀 안에 쉼표가 있어도 오류나지 않도록 처리)
         function parseCSVRow(row) {
@@ -176,7 +177,7 @@
             return result;
         }
 
-        // 데이터를 불러오고 화면에 렌더링하는 함수
+        // 데이터를 불러오고 화면에 렌더링하는 함수 (갈무리 데이터)
         async function fetchAndRenderData() {
             const container = document.getElementById('card-container');
             
@@ -232,24 +233,21 @@
             }
         }
 
-        // 방문자 데이터를 불러오는 함수
+        // 방문자 데이터를 구글 Apps Script 서버를 통해 증가시키고 가져오는 함수
         async function fetchVisitorData() {
-            if (visitorCsvUrl === "https://docs.google.com/spreadsheets/d/e/2PACX-1vTeppfMxUOempDMUrlnp_Qqm_aR6EZ3_yXM4mNvwZ3MFBLmMzzFJL47gpo158FxNWIAKcYFSR7Z1Amk/pub?gid=1154690763&single=true&output=csv") return;
+            if (scriptUrl === "https://script.google.com/macros/s/AKfycbzOOa349MbJRIALvsZdKf-HzW-TVxK2BFjKcrgve_PBKWzS64r0kX-FZZHIqx1hjpbUXQ/exec") return;
             
             try {
-                const response = await fetch(visitorCsvUrl + "&t=" + new Date().getTime());
-                const data = await response.text();
-                const rows = data.split(/\r?\n/);
+                // Apps Script 웹 앱 호출 (방문자 수 1 증가 후 결과 반환됨)
+                const response = await fetch(scriptUrl);
+                const data = await response.json(); // JSON 형식으로 데이터 받기
                 
-                if (rows.length > 0) {
-                    const columns = parseCSVRow(rows[0]); // A1, B1 데이터 추출
-                    if (columns.length >= 2) {
-                        document.getElementById('today-count').innerText = columns[0].trim() || '0';
-                        document.getElementById('total-count').innerText = columns[1].trim() || '0';
-                    }
-                }
+                // 화면에 숫자 업데이트
+                document.getElementById('today-count').innerText = data.today || '0';
+                document.getElementById('total-count').innerText = data.total || '0';
+                
             } catch (error) {
-                console.error("방문자 데이터 로드 에러:", error);
+                console.error("방문자 데이터 처리 에러:", error);
             }
         }
 
