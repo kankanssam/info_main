@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>나의 웹앱 갈무리</title>
+    <title>정왕고 정보과목 웹페이지</title>
     <style>
         /* --- 컬러 팔레트 수정 (흰색 배경, 파스텔 톤) --- */
         :root {
@@ -235,11 +235,18 @@
 
         // 방문자 데이터를 구글 Apps Script 서버를 통해 증가시키고 가져오는 함수
         async function fetchVisitorData() {
-            if (scriptUrl === "https://script.google.com/macros/s/AKfycbzOOa349MbJRIALvsZdKf-HzW-TVxK2BFjKcrgve_PBKWzS64r0kX-FZZHIqx1hjpbUXQ/exec") return;
+            // 수정된 부분 1: URL 입력이 안 되어있을 때 화면에 안내 표시
+            if (scriptUrl === "여기에_Apps_Script_웹앱_URL을_넣어주세요" || scriptUrl === "") {
+                document.getElementById('today-count').innerText = 'URL';
+                document.getElementById('total-count').innerText = '필요';
+                return;
+            }
             
             try {
-                // Apps Script 웹 앱 호출 (방문자 수 1 증가 후 결과 반환됨)
-                const response = await fetch(scriptUrl);
+                // 수정된 부분 2: 캐시 방지를 위해 현재 시간을 쿼리에 추가 (가장 정확한 숫자 반영)
+                const fetchUrl = scriptUrl.includes('?') ? `${scriptUrl}&t=${new Date().getTime()}` : `${scriptUrl}?t=${new Date().getTime()}`;
+                
+                const response = await fetch(fetchUrl);
                 const data = await response.json(); // JSON 형식으로 데이터 받기
                 
                 // 화면에 숫자 업데이트
@@ -248,6 +255,9 @@
                 
             } catch (error) {
                 console.error("방문자 데이터 처리 에러:", error);
+                // 통신 실패 시 화면에 에러 표시
+                document.getElementById('today-count').innerText = '에러';
+                document.getElementById('total-count').innerText = '에러';
             }
         }
 
